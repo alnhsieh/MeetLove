@@ -12,10 +12,14 @@ import uuid
 from typing import Dict, Optional
 from contextlib import asynccontextmanager
 
+from config import HOST, PORT, CORS_ORIGINS, SOCKET_PING_TIMEOUT, SOCKET_PING_INTERVAL
 from routers import match, session, auth
 from models.schemas import MatchResponse, SessionResult
 from services.match_service import MatchService
 from services.emotion_service import EmotionAnalysisService
+
+# 解析 CORS 來源
+cors_origins = [o.strip() for o in CORS_ORIGINS.split(",")] if CORS_ORIGINS != "*" else "*"
 
 # 創建 FastAPI app
 app = FastAPI(
@@ -27,9 +31,9 @@ app = FastAPI(
 # 創建 Socket.IO server (async mode)
 sio = socketio.AsyncServer(
     async_mode='asgi',
-    cors_allowed_origins="*",  # 允許所有來源（開發階段）
-    ping_timeout=60,
-    ping_interval=25
+    cors_allowed_origins=cors_origins,  # 從 config.py 讀取
+    ping_timeout=SOCKET_PING_TIMEOUT,
+    ping_interval=SOCKET_PING_INTERVAL
 )
 
 # 包裝成 ASGI app
@@ -38,7 +42,7 @@ socket_app = socketio.ASGIApp(sio, app)
 # CORS 設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins="*",  # 允許所有來源
+    allow_origins=cors_origins,  # 從 config.py 讀取
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { io, Socket } from 'socket.io-client'
 import VideoCall from './components/VideoCall'
 import EmotionDisplay from './components/EmotionDisplay'
+import { BACKEND_HOST, BACKEND_PORT } from './config'
 import './App.css'
 
 // 類型定義
@@ -76,8 +77,7 @@ function App() {
 
   // 初始化 Socket 連接
   useEffect(() => {
-    const serverUrl = window.location.hostname
-    const newSocket = io(`http://${serverUrl}:8000`, {
+    const newSocket = io(`http://${BACKEND_HOST}:${BACKEND_PORT}`, {
       transports: ['polling'],  // 使用 polling 避免 WebSocket 問題
       autoConnect: true
     })
