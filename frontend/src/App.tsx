@@ -76,7 +76,8 @@ function App() {
 
   // 初始化 Socket 連接
   useEffect(() => {
-    const newSocket = io('http://localhost:8000', {
+    const serverUrl = window.location.hostname
+    const newSocket = io(`http://${serverUrl}:8000`, {
       transports: ['polling'],  // 使用 polling 避免 WebSocket 問題
       autoConnect: true
     })

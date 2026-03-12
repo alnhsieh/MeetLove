@@ -27,7 +27,7 @@ app = FastAPI(
 # 創建 Socket.IO server (async mode)
 sio = socketio.AsyncServer(
     async_mode='asgi',
-    cors_allowed_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],
+    cors_allowed_origins="*",  # 允許所有來源（開發階段）
     ping_timeout=60,
     ping_interval=25
 )
@@ -38,7 +38,7 @@ socket_app = socketio.ASGIApp(sio, app)
 # CORS 設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],
+    allow_origins="*",  # 允許所有來源
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
