@@ -38,25 +38,12 @@ function App() {
 
   // 初始化本地視訊流
   const initLocalStream = useCallback(async () => {
-    // 直接嘗試取得視訊串流
+    // 直接嘗試取得視訊串流，不做預先檢查
     try {
-      console.log('navigator.mediaDevices:', navigator.mediaDevices)
-      console.log('getUserMedia:', navigator.mediaDevices?.getUserMedia)
-      console.log('window.isSecureContext:', window.isSecureContext)
-      console.log('location:', window.location.href)
+      console.log('Attempting to getUserMedia...')
+      console.log('navigator.mediaDevices:', typeof navigator.mediaDevices, navigator.mediaDevices)
       
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert('您的瀏覽器不支援視訊通話\n\nnavigator.mediaDevices: ' + !!navigator.mediaDevices + '\ngetUserMedia: ' + !!navigator.mediaDevices?.getUserMedia)
-        return
-      }
-      
-      // 檢查是否為安全上下文
-      if (!window.isSecureContext) {
-        alert('此頁面非安全上下文 (HTTPS)，無法使用相機\n\n請使用 HTTPS 或 localhost')
-        return
-      }
-      
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await (navigator.mediaDevices as any).getUserMedia({
         video: {
           width: { ideal: 640 },
           height: { ideal: 480 },
