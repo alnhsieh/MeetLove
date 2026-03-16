@@ -38,18 +38,16 @@ function App() {
 
   // 初始化本地視訊流
   const initLocalStream = useCallback(async () => {
+    // 檢查瀏覽器是否支援
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error('Browser does not support getUserMedia')
+      alert('您的瀏覽器不支援視訊通話，請確保使用 HTTPS 或 localhost')
+      return
+    }
+    
+    // 嘗試取得視訊串流
     try {
-      // 檢查瀏覽器是否支援
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.error('Browser does not support getUserMedia')
-        alert('您的瀏覽器不支援視訊通話，請確保使用 HTTPS 或 localhost')
-        return
-      }
-      
-      // 嘗試取得視訊串流
-      let stream: MediaStream
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 640 },
           height: { ideal: 480 },
