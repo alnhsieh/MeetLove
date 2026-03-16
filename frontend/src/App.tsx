@@ -40,8 +40,19 @@ function App() {
   const initLocalStream = useCallback(async () => {
     // 直接嘗試取得視訊串流
     try {
+      console.log('navigator.mediaDevices:', navigator.mediaDevices)
+      console.log('getUserMedia:', navigator.mediaDevices?.getUserMedia)
+      console.log('window.isSecureContext:', window.isSecureContext)
+      console.log('location:', window.location.href)
+      
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert('您的瀏覽器不支援視訊通話')
+        alert('您的瀏覽器不支援視訊通話\n\nnavigator.mediaDevices: ' + !!navigator.mediaDevices + '\ngetUserMedia: ' + !!navigator.mediaDevices?.getUserMedia)
+        return
+      }
+      
+      // 檢查是否為安全上下文
+      if (!window.isSecureContext) {
+        alert('此頁面非安全上下文 (HTTPS)，無法使用相機\n\n請使用 HTTPS 或 localhost')
         return
       }
       
