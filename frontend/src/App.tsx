@@ -42,11 +42,14 @@ function App() {
       // 檢查瀏覽器是否支援
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.error('Browser does not support getUserMedia')
-        alert('您的瀏覽器不支援視訊通話，請使用 Chrome 或 Edge 瀏覽器')
+        alert('您的瀏覽器不支援視訊通話，請確保使用 HTTPS 或 localhost')
         return
       }
       
-      const stream = await navigator.mediaDevices.getUserMedia({
+      // 嘗試取得視訊串流
+      let stream: MediaStream
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 640 },
           height: { ideal: 480 },
