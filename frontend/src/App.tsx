@@ -38,15 +38,13 @@ function App() {
 
   // 初始化本地視訊流
   const initLocalStream = useCallback(async () => {
-    // 檢查瀏覽器是否支援
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.error('Browser does not support getUserMedia')
-      alert('您的瀏覽器不支援視訊通話，請確保使用 HTTPS 或 localhost')
-      return
-    }
-    
-    // 嘗試取得視訊串流
+    // 直接嘗試取得視訊串流
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('您的瀏覽器不支援視訊通話')
+        return
+      }
+      
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 640 },
@@ -64,11 +62,18 @@ function App() {
       console.log('📹 Local stream initialized')
     } catch (err: unknown) {
       console.error('Failed to get local media:', err)
-      const error = err as Error
-      if (error.name === 'NotAllowedError') {
+      const error = err as Error & { name?: string }
+      console.log('Error name:', error.name)
+      console.log('Error message:', error.message)
+      
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
         alert('請允許相機和麥克風權限後重新整理頁面')
-      } else if (error.name === 'NotFoundError') {
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
         alert('找不到相機或麥克風，請確認設備已連接')
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        alert('相機或麥克風被其他程式佔用')
+      } else if (error.name === 'OverconstrainedError') {
+        alert('無法滿足相機設定要求')
       } else {
         alert('無法存取相機: ' + error.message)
       }
